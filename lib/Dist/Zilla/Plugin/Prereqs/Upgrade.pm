@@ -10,8 +10,9 @@ our $VERSION = '0.001000';
 
 our $AUTHORITY = 'cpan:KENTNL'; # AUTHORITY
 
-use Moose qw( has with );
+use Moose qw( has with around );
 use Scalar::Util qw( blessed );
+use Dist::Zilla::Util::ConfigDumper qw( config_dumper );
 
 with 'Dist::Zilla::Role::PrereqSource';
 
@@ -43,6 +44,10 @@ _defaulted 'source_relation' => 'Str'           => sub { 'requires' };
 
 _builder 'applyto_map' => 'ArrayRef[Str]';
 _builder _applyto_map_pairs => 'ArrayRef[HashRef]', init_arg => undef;
+
+around dump_config => config_dumper(__PACKAGE__, {
+  attrs => [qw( modules applyto_map applyto_phase target_relation source_relation )],
+});
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

@@ -52,6 +52,7 @@
       "Dist::Zilla::Plugin::UploadToCPAN" : "5.031",
       "Dist::Zilla::PluginBundle::Author::KENTNL" : "2.023000",
       "Dist::Zilla::Role::PrereqSource" : "5.031",
+      "Dist::Zilla::Util::ConfigDumper" : "0.003006",
       "ExtUtils::MakeMaker" : "7.05_07",
       "File::Spec" : "3.51",
       "Moose" : "2.1403",
