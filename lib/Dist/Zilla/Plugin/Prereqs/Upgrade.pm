@@ -142,7 +142,7 @@ my $combo = qr/(?:$re_phase)[.](?:$re_relation)/msx;
 sub _parse_map_token {
   my ( $self,  $token )    = @_;
   my ( $phase, $relation ) = $token =~ /\A($re_phase)[.]($re_relation)/msx;
-  unless ( defined $phase and defined $relation ) {
+  if ( not defined $phase or not defined $relation ) {
     return $self->log_fatal( [ '%s is not in the form <phase.relation>', $token ] );
   }
   return { phase => $phase, relation => $relation, };
