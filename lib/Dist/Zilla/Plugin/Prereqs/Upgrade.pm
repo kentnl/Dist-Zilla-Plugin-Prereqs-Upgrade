@@ -96,7 +96,6 @@ sub _register_applyto_map_entry {
   for my $module ( keys %{$reqs} ) {
     next unless $self->_user_wants_upgrade_on($module);
     my $v = $self->_wanted_minimum_on($module);
-    $self->log_debug( [ "%s.%s, Setting minimum for %s to %s", $targetspec->{phase}, $targetspec->{type}, $module, "$v" ] );
 
     # Get the original requirement and see if applying the new minimum changes anything
     my $fake_target = $prereqs->{$phase}->{$rel}->clone;
@@ -104,6 +103,8 @@ sub _register_applyto_map_entry {
     $fake_target->add_string_requirement( $module, $v );
     # Dep changed in the effective source spec
     next unless $fake_target->as_string_hash->{ $module } ne $old_string;
+
+    $self->log_debug( [ "%s.%s, Setting minimum for %s to %s", $targetspec->{phase}, $targetspec->{type}, $module, "$v" ] );
 
     # Apply the change to the target spec to to it being an upgrade.
     $self->zilla->register_prereqs( $targetspec, $module, $fake_target->as_string_hash->{$module} );
