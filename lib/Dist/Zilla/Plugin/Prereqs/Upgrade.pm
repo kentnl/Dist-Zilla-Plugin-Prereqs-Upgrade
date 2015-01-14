@@ -104,7 +104,7 @@ sub _register_applyto_map_entry {
     # Dep changed in the effective source spec
     next unless $fake_target->as_string_hash->{ $module } ne $old_string;
 
-    $self->log_debug( [ "%s.%s, Setting minimum for %s to %s", $targetspec->{phase}, $targetspec->{type}, $module, "$v" ] );
+    $self->log_debug( [ "Upgrading %s to %s", $module, "$v" ] );
 
     # Apply the change to the target spec to to it being an upgrade.
     $self->zilla->register_prereqs( $targetspec, $module, $fake_target->as_string_hash->{$module} );
