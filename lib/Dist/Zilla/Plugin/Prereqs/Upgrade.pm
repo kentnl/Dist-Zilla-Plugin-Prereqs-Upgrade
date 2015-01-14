@@ -33,7 +33,7 @@ has 'modules' => (
   traits   => [qw( Hash )],
   handles  => {
     '_user_wants_upgrade_on' => 'exists',
-    '_wanted_minimum_on' => 'get',
+    '_wanted_minimum_on'     => 'get',
   },
 );
 
@@ -76,6 +76,7 @@ sub BUILDARGS {
   }
   return { '-modules' => $modules, %{$config} };
 }
+
 sub _register_applyto_map_entry {
   my ( $self, $applyto, $prereqs ) = @_;
   my ( $phase, $rel );
@@ -99,10 +100,11 @@ sub _register_applyto_map_entry {
 
     # Get the original requirement and see if applying the new minimum changes anything
     my $fake_target = $prereqs->{$phase}->{$rel}->clone;
-    my $old_string  = $fake_target->as_string_hash->{ $module };
+    my $old_string  = $fake_target->as_string_hash->{$module};
     $fake_target->add_string_requirement( $module, $v );
+
     # Dep changed in the effective source spec
-    next unless $fake_target->as_string_hash->{ $module } ne $old_string;
+    next unless $fake_target->as_string_hash->{$module} ne $old_string;
 
     $self->log_debug( [ "Upgrading %s %s to %s", $module, "$old_string", "$v" ] );
 
@@ -178,11 +180,121 @@ This is intended to be used to compliment C<[AutoPrereqs]> without adding depend
   [AutoPrereqs]
 
   [Prereqs::Upgrade]
-  Moose = 2.0 ; Moose is upgraded to 2.0 if its a prereq, but ignored otherwise.
+  Moose = 2.0 ; Moose 2.0 is added as a minimum to runtime.recommends to 2.0 if a lower version is in runtime.requires
 
 This is intended to be especially helpful in C<PluginBundle>'s where one may habitually
 always want a certain version of a certain dependency every time they use it, but don't want to be burdened
 with remembering to encode that version of it.
+
+=head1 USAGE
+
+=head2 BASICS
+
+For most cases, all you'll need to do is:
+
+  [Prereqs::Upgrade]
+  My::Module = Version Spec that is recommended
+
+And then everything in C<PHASE.requires> will be copied to C<PHASE.recommends>
+if it is determined that doing so will cause the dependency to be changed.
+
+For instance, you may want to do:
+
+  [Prereqs::Upgrade]
+  Moose = 2.0
+  Moo   = 1.008001
+
+Note that this will not imply Moo unless Moo is B<ALREADY> a requirement, and won't imply Moose unless Moose is B<ALREADY>
+a requirement.
+
+And this will transform:
+
+  { runtime: { requires: { Moose: 0 }}
+
+Into
+
+  { runtime: { 
+         requires:   { Moose: 0 },
+         recommends: { Moose: 2.0 }
+  }}
+
+=head3 C<-target_relation>
+
+By default, the target relationship type is C<recommends>.
+
+However, this can be adjusted with the C<-target_relation> attribute.
+
+  [Prereqs::Upgrade]
+  ; -target_relation = requires ; Not recommended and way more strict
+  -target_relation = suggests   ; Makes upgrades suggestions instead of recommendations
+  Moose = 2.0
+  Moo   = 1.008001
+
+=head3 C<-source_relation>
+
+By default, this tool assumes you have a single relation type
+that you wish to translate into a  L<< C<target>|/-target_relation >>,
+and thus the default C<-source_relation> is C<requires>.
+
+  [Prereqs::Upgrade]
+  ; This example doesn't make much sense but it would work
+  -source_relation = recommends
+  -target_relation = suggests
+  Moose = 2.0
+
+This would add a C<PHASE.suggests> upgrade to C<2.0> if C<Moose> was found in C<PHASE.recommends>
+
+=head3 C<-applyto_phase>
+
+By default, this tool applies upgrades from C<-source_relation> to C<-target_relation>
+C<foreach> C<-applyto_phase>, and this lists default contents is:
+
+  [Prereqs::Upgrade]
+  -applyto_phase = build
+  -applyto_phase = configure
+  -applyto_phase = test
+  -applyto_phase = runtime
+  -applyto_phase = develop
+
+=head2 ADVANCED USAGE
+
+=head3 C<-applyto_map>
+
+Advanced users can define arbitrary transform maps, which the L<basic|/BASIC USAGE> parameters
+are simplified syntax for.
+
+Under the hood, you can define any source C<PHASE.RELATION> and map it as an upgrade to any target C<PHASE.RELATION>, even if it doesn't make much sense to do so.
+
+This section is material that often seems like YAGNI but I find I end up needing it somewhere,
+because its not very straight forward to demonstrate a simple case where it would be useful.
+
+However, in this example: If a distribution uses Moose, then the distribution itself is permitted to have version = C<0>
+
+But a C<runtime.recommends> of C<2.0> is injected, and a C<develop.requires> of C<2.0> is injected.
+
+  [Prereqs::Upgrade]
+  -applyto_map = runtime.requires = runtime.recommends
+  -applyto_map = runtime.requires = develop.requires
+  Moose = 2.0
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<< C<[Prereqs::MatchInstalled]>|Dist::Zilla::Plugin::Prereqs::MatchInstalled >>
+
+Upgrades stated dependencies to whatever you have installed, which is
+significantly more flippant than having some auto-upgrading base versions.
+
+=item * L<< C<[Prereqs::Recommend::MatchInstalled]>|Dist::Zilla::Plugin::Prereqs::Recommend::MatchInstalled >>
+
+Like the above, except supports C<requires> → C<recommends> translation ( and does that by default )
+
+=item * L<< C<[Prereqs::MatchInstalled::All]>|Dist::Zilla::Plugin::Prereqs::MatchInstalled::All >>
+
+The most hateful way you can request CPAN to install all the latest things for your module.
+
+=back
 
 =head1 AUTHOR
 
