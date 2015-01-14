@@ -21,7 +21,9 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.006",
   "NAME" => "Dist::Zilla::Plugin::Prereqs::Upgrade",
   "PREREQ_PM" => {
+    "Dist::Zilla::Role::PrereqSource" => 0,
     "Moose" => 0,
+    "Scalar::Util" => 0,
     "strict" => 0,
     "warnings" => 0
   },
@@ -38,9 +40,11 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Dist::Zilla::Role::PrereqSource" => 0,
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
   "Moose" => 0,
+  "Scalar::Util" => 0,
   "Test::More" => "0.89",
   "strict" => 0,
   "warnings" => 0

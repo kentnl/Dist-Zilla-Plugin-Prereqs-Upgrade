@@ -1,7 +1,7 @@
 do { my $x = {
        'configure' => {
                         'recommends' => {
-                                          'ExtUtils::MakeMaker' => '7.05_07'
+                                          'ExtUtils::MakeMaker' => '7.0'
                                         },
                         'requires' => {
                                         'ExtUtils::MakeMaker' => '0',
@@ -10,7 +10,7 @@ do { my $x = {
                       },
        'develop' => {
                       'recommends' => {
-                                        'Test::More' => '1.301001_097'
+                                        'Test::More' => '0.98'
                                       },
                       'requires' => {
                                       'Dist::Zilla' => '5',
@@ -18,6 +18,7 @@ do { my $x = {
                                       'Dist::Zilla::Plugin::Author::KENTNL::TravisCI' => '0',
                                       'Dist::Zilla::Plugin::Authority' => '1.006',
                                       'Dist::Zilla::Plugin::AutoPrereqs' => '0',
+                                      'Dist::Zilla::Plugin::Bootstrap::lib' => '0',
                                       'Dist::Zilla::Plugin::BumpVersionAfterRelease' => '0',
                                       'Dist::Zilla::Plugin::ConfirmRelease' => '0',
                                       'Dist::Zilla::Plugin::CopyFilesFromBuild' => '0',
@@ -45,7 +46,7 @@ do { my $x = {
                                       'Dist::Zilla::Plugin::PodWeaver' => '0',
                                       'Dist::Zilla::Plugin::Prereqs' => '0',
                                       'Dist::Zilla::Plugin::Prereqs::AuthorDeps' => '0',
-                                      'Dist::Zilla::Plugin::Prereqs::Recommend::MatchInstalled' => '0',
+                                      'Dist::Zilla::Plugin::Prereqs::Upgrade' => '0',
                                       'Dist::Zilla::Plugin::Readme::Brief' => '0',
                                       'Dist::Zilla::Plugin::ReadmeAnyFromPod' => '0',
                                       'Dist::Zilla::Plugin::RewriteVersion::Sanitized' => '0',
@@ -70,13 +71,18 @@ do { my $x = {
                                       'Test::Pod::Coverage' => '1.08'
                                     },
                       'suggests' => {
-                                      'Dist::Zilla::App::Command::bakeini' => '0.002000',
+                                      'Dist::Zilla::App::Command::bakeini' => '0.001000',
                                       'Dist::Zilla::PluginBundle::Author::KENTNL' => '2.023000'
                                     }
                     },
        'runtime' => {
+                      'recommends' => {
+                                        'Moose' => '2.0'
+                                      },
                       'requires' => {
+                                      'Dist::Zilla::Role::PrereqSource' => '0',
                                       'Moose' => '0',
+                                      'Scalar::Util' => '0',
                                       'perl' => '5.006',
                                       'strict' => '0',
                                       'warnings' => '0'
@@ -85,8 +91,8 @@ do { my $x = {
        'test' => {
                    'recommends' => {
                                      'CPAN::Meta' => '2.120900',
-                                     'ExtUtils::MakeMaker' => '7.05_07',
-                                     'Test::More' => '1.301001_097'
+                                     'ExtUtils::MakeMaker' => '7.0',
+                                     'Test::More' => '0.98'
                                    },
                    'requires' => {
                                    'ExtUtils::MakeMaker' => '0',
