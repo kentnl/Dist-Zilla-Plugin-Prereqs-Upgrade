@@ -48,7 +48,7 @@ _builder _applyto_map_pairs => 'ArrayRef[HashRef]', init_arg => undef;
 around dump_config => config_dumper( __PACKAGE__,
   {
     attrs => [qw( modules applyto_map applyto_phase target_relation source_relation )],
-  }
+  },
 );
 
 __PACKAGE__->meta->make_immutable;
