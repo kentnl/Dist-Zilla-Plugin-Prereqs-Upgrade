@@ -16,11 +16,117 @@ This is intended to be used to compliment `[AutoPrereqs]` without adding depende
     [AutoPrereqs]
 
     [Prereqs::Upgrade]
-    Moose = 2.0 ; Moose is upgraded to 2.0 if its a prereq, but ignored otherwise.
+    Moose = 2.0 ; Moose 2.0 is added as a minimum to runtime.recommends to 2.0 if a lower version is in runtime.requires
 
 This is intended to be especially helpful in `PluginBundle`'s where one may habitually
 always want a certain version of a certain dependency every time they use it, but don't want to be burdened
 with remembering to encode that version of it.
+
+# USAGE
+
+## BASICS
+
+For most cases, all you'll need to do is:
+
+    [Prereqs::Upgrade]
+    My::Module = Version Spec that is recommended
+
+And then everything in `PHASE.requires` will be copied to `PHASE.recommends`
+if it is determined that doing so will cause the dependency to be changed.
+
+For instance, you may want to do:
+
+    [Prereqs::Upgrade]
+    Moose = 2.0
+    Moo   = 1.008001
+
+Note that this will not imply Moo unless Moo is **ALREADY** a requirement, and won't imply Moose unless Moose is **ALREADY**
+a requirement.
+
+And this will transform:
+
+    { runtime: { requires: { Moose: 0 }}
+
+Into
+
+    { runtime: {
+           requires:   { Moose: 0 },
+           recommends: { Moose: 2.0 }
+    }}
+
+### `-target_relation`
+
+By default, the target relationship type is `recommends`.
+
+However, this can be adjusted with the `-target_relation` attribute.
+
+    [Prereqs::Upgrade]
+    ; -target_relation = requires ; Not recommended and way more strict
+    -target_relation = suggests   ; Makes upgrades suggestions instead of recommendations
+    Moose = 2.0
+    Moo   = 1.008001
+
+### `-source_relation`
+
+By default, this tool assumes you have a single relation type
+that you wish to translate into a  [`target`](#target_relation),
+and thus the default `-source_relation` is `requires`.
+
+    [Prereqs::Upgrade]
+    ; This example doesn't make much sense but it would work
+    -source_relation = recommends
+    -target_relation = suggests
+    Moose = 2.0
+
+This would add a `PHASE.suggests` upgrade to `2.0` if `Moose` was found in `PHASE.recommends`
+
+### `-applyto_phase`
+
+By default, this tool applies upgrades from `-source_relation` to `-target_relation`
+`foreach` `-applyto_phase`, and this lists default contents is:
+
+    [Prereqs::Upgrade]
+    -applyto_phase = build
+    -applyto_phase = configure
+    -applyto_phase = test
+    -applyto_phase = runtime
+    -applyto_phase = develop
+
+## ADVANCED USAGE
+
+### `-applyto_map`
+
+Advanced users can define arbitrary transform maps, which the [basic](#basic-usage) parameters
+are simplified syntax for.
+
+Under the hood, you can define any source `PHASE.RELATION` and map it as an upgrade to any target `PHASE.RELATION`, even if it doesn't make much sense to do so.
+
+This section is material that often seems like `YAGNI` but I find I end up needing it somewhere,
+because its not very straight forward to demonstrate a simple case where it would be useful.
+
+However, in this example: If a distribution uses Moose, then the distribution itself is permitted to have version = `0`
+
+But a `runtime.recommends` of `2.0` is injected, and a `develop.requires` of `2.0` is injected.
+
+    [Prereqs::Upgrade]
+    -applyto_map = runtime.requires = runtime.recommends
+    -applyto_map = runtime.requires = develop.requires
+    Moose = 2.0
+
+# SEE ALSO
+
+- [`[Prereqs::MatchInstalled]`](https://metacpan.org/pod/Dist::Zilla::Plugin::Prereqs::MatchInstalled)
+
+    Upgrades stated dependencies to whatever you have installed, which is
+    significantly more flippant than having some auto-upgrading base versions.
+
+- [`[Prereqs::Recommend::MatchInstalled]`](https://metacpan.org/pod/Dist::Zilla::Plugin::Prereqs::Recommend::MatchInstalled)
+
+    Like the above, except supports `requires` → `recommends` translation ( and does that by default )
+
+- [`[Prereqs::MatchInstalled::All]`](https://metacpan.org/pod/Dist::Zilla::Plugin::Prereqs::MatchInstalled::All)
+
+    The most hateful way you can request `CPAN` to install all the latest things for your module.
 
 # AUTHOR
 
