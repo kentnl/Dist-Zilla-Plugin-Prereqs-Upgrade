@@ -115,7 +115,7 @@ sub _register_applyto_map_entry {
     # Dep changed in the effective source spec
     next if $fake_target->as_string_hash->{$module} eq $old_string;
 
-    $self->log_debug( [ "Upgrading %s %s to %s", $module, "$old_string", "$v" ] );
+    $self->log_debug( [ 'Upgrading %s %s to %s', $module, "$old_string", "$v" ] );
 
     # Apply the change to the target spec to to it being an upgrade.
     $self->zilla->register_prereqs( $targetspec, $module, $fake_target->as_string_hash->{$module} );
@@ -151,7 +151,7 @@ sub _parse_map_token {
 sub _parse_map_entry {
   my ( $self,   $entry )  = @_;
   my ( $source, $target ) = $entry =~ /\A\s*($combo)\s*=\s*($combo)\s*\z/msx;
-  unless ( defined $source and defined $target ) {
+  if ( not defined $source or not defined $target ) {
     return $self->log_fatal( [ '%s is not a valid entry for -applyto_map', $entry ] );
   }
   return {
@@ -164,6 +164,8 @@ sub _build__applyto_map_pairs {
   my ($self) = @_;
   return [ map { $self->_parse_map_entry($_) } @{ $self->applyto_map } ];
 }
+
+1;
 
 __END__
 
@@ -195,7 +197,7 @@ This is intended to be especially helpful in C<PluginBundle>'s where one may hab
 always want a certain version of a certain dependency every time they use it, but don't want to be burdened
 with remembering to encode that version of it.
 
-=for Pod::Coverage mvp_multivalue_args register_prereqs 
+=for Pod::Coverage mvp_multivalue_args register_prereqs
 
 =head1 USAGE
 
