@@ -213,7 +213,7 @@ And this will transform:
 
 Into
 
-  { runtime: { 
+  { runtime: {
          requires:   { Moose: 0 },
          recommends: { Moose: 2.0 }
   }}
