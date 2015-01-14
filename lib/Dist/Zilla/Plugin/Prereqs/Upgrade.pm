@@ -96,6 +96,10 @@ sub _register_applyto_map_entry {
     next unless $self->_user_wants_upgrade_on($module);
     my $v = $self->_wanted_minimum_on($module);
     $self->log_debug( [ "%s.%s, Setting minimum for %s to %s", $targetspec->{phase}, $targetspec->{type}, $module, "$v" ] );
+    # Copy the existing requirement over the target
+    # so that if the phase changes, the new phase incorporates the old instead of downgrading it
+    # if its lower.
+    $self->zilla->register_prereqs( $targetspec, $module, $reqs->{$module} );
     $self->zilla->register_prereqs( $targetspec, $module, $v );
   }
   return $self;
