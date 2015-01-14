@@ -4,7 +4,7 @@ use warnings;
 
 package Dist::Zilla::Plugin::Prereqs::Upgrade;
 
-our $VERSION = '0.001000';
+our $VERSION = '0.001001';
 
 # ABSTRACT: Upgrade existing prerequisites in place
 
@@ -181,7 +181,7 @@ Dist::Zilla::Plugin::Prereqs::Upgrade - Upgrade existing prerequisites in place
 
 =head1 VERSION
 
-version 0.001000
+version 0.001001
 
 =head1 DESCRIPTION
 

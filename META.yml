@@ -20,7 +20,7 @@ name: Dist-Zilla-Plugin-Prereqs-Upgrade
 provides:
   Dist::Zilla::Plugin::Prereqs::Upgrade:
     file: lib/Dist/Zilla/Plugin/Prereqs/Upgrade.pm
-    version: '0.001000'
+    version: '0.001001'
 recommends:
   Moose: '2.1204'
 requires:
@@ -35,7 +35,7 @@ resources:
   bugtracker: https://github.com/kentnl/Dist-Zilla-Plugin-Prereqs-Upgrade/issues
   homepage: https://github.com/kentnl/Dist-Zilla-Plugin-Prereqs-Upgrade
   repository: https://github.com/kentnl/Dist-Zilla-Plugin-Prereqs-Upgrade.git
-version: '0.001000'
+version: '0.001001'
 x_BuiltWith:
   external_file: misc/built_with.json
 x_Dist_Zilla:
@@ -395,7 +395,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::Git::Tag:
           branch: ~
           signed: 0
-          tag: 0.001000-source
+          tag: 0.001001-source
           tag_format: '%v-source'
           tag_message: v%v
           time_zone: local
@@ -449,7 +449,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::Git::Tag:
           branch: releases
           signed: 0
-          tag: '0.001000'
+          tag: '0.001001'
           tag_format: '%v'
           tag_message: v%v
           time_zone: local
@@ -491,7 +491,7 @@ x_Dist_Zilla:
             Path::Tiny: '0.58'
             Test::More: '0.99'
       name: Prereqs::Upgrade
-      version: '0.001000'
+      version: '0.001001'
     -
       class: Dist::Zilla::Plugin::FinderCode
       name: ':InstallModules'
