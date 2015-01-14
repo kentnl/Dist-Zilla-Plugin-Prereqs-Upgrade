@@ -18,12 +18,12 @@ with 'Dist::Zilla::Role::PrereqSource';
 
 sub _defaulted {
   my ( $name, $type, $default, @rest ) = @_;
-  return has $name, is => 'ro', isa => $type, init_arg => '-' . $name, lazy => 1, default => $default, @rest;
+  return has $name, is => 'ro', isa => $type, init_arg => q[-] . $name, lazy => 1, default => $default, @rest;
 }
 
 sub _builder {
   my ( $name, $type, @rest ) = @_;
-  return has $name, is => 'ro', isa => $type, init_arg => '-' . $name, 'lazy_build' => 1, @rest;
+  return has $name, is => 'ro', isa => $type, init_arg => q[-] . $name, 'lazy_build' => 1, @rest;
 }
 
 has 'modules' => (
@@ -52,6 +52,10 @@ around dump_config => config_dumper(__PACKAGE__, {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
+
+
+
+
 sub mvp_multivalue_args { return qw(-applyto_map -applyto_phase) }
 
 sub register_prereqs {
@@ -67,16 +71,16 @@ sub register_prereqs {
 }
 
 sub BUILDARGS {
-  my ( $self, $config, @extra ) = @_;
+  my ( undef, $config, @extra ) = @_;
   if ( 'HASH' ne ( ref $config || q[] ) or scalar @extra ) {
     $config = { $config, @extra };
   }
   my $modules = {};
   for my $key ( keys %{$config} ) {
     next if $key =~ /\A-/msx;
-    next if $key eq 'plugin_name';
+    next if 'plugin_name' eq $key;
     next if blessed $config->{$key};
-    next if $key eq 'zilla';
+    next if 'zilla' eq $key;
     $modules->{$key} = delete $config->{$key};
   }
   return { '-modules' => $modules, %{$config} };
@@ -109,7 +113,7 @@ sub _register_applyto_map_entry {
     $fake_target->add_string_requirement( $module, $v );
 
     # Dep changed in the effective source spec
-    next unless $fake_target->as_string_hash->{$module} ne $old_string;
+    next if $fake_target->as_string_hash->{$module} eq $old_string;
 
     $self->log_debug( [ "Upgrading %s %s to %s", $module, "$old_string", "$v" ] );
 
@@ -191,6 +195,8 @@ This is intended to be especially helpful in C<PluginBundle>'s where one may hab
 always want a certain version of a certain dependency every time they use it, but don't want to be burdened
 with remembering to encode that version of it.
 
+=for Pod::Coverage mvp_multivalue_args register_prereqs 
+
 =head1 USAGE
 
 =head2 BASICS
@@ -270,7 +276,7 @@ are simplified syntax for.
 
 Under the hood, you can define any source C<PHASE.RELATION> and map it as an upgrade to any target C<PHASE.RELATION>, even if it doesn't make much sense to do so.
 
-This section is material that often seems like YAGNI but I find I end up needing it somewhere,
+This section is material that often seems like C<YAGNI> but I find I end up needing it somewhere,
 because its not very straight forward to demonstrate a simple case where it would be useful.
 
 However, in this example: If a distribution uses Moose, then the distribution itself is permitted to have version = C<0>
@@ -297,7 +303,7 @@ Like the above, except supports C<requires> → C<recommends> translation ( and 
 
 =item * L<< C<[Prereqs::MatchInstalled::All]>|Dist::Zilla::Plugin::Prereqs::MatchInstalled::All >>
 
-The most hateful way you can request CPAN to install all the latest things for your module.
+The most hateful way you can request C<CPAN> to install all the latest things for your module.
 
 =back
 
