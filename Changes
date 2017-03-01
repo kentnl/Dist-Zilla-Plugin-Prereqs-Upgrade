@@ -1,6 +1,8 @@
 Release history for Dist-Zilla-Plugin-Prereqs-Upgrade
 
 {{$NEXT}}
+
+0.001001 2017-03-01T22:55:06Z bfb3845
  [Bugfix]
  - Update tooling for .-in-@INC removal
  - Closes https://github.com/kentnl/Dist-Zilla-Plugin-Prereqs-Upgrade/issues/1
