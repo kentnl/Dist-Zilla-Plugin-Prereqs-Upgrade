@@ -19,6 +19,8 @@ bumpversions      = 1
 copyfiles         = LICENSE
 srcreadme         = mkdn
 twitter_extra_hash_tags = #distzilla
+Test::Compile::PerFile.:version = 0.003902
+Test::Compile::PerFile.test_template = 02-raw-require.t.tpl
 ; auto_prereqs_skip = File::Find
 
 [Prereqs]
